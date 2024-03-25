@@ -4,7 +4,6 @@
 
 
 int main(void) {
-
     queue_t q;
     uint32_t buffer[3];
     uint32_t read = 0;
