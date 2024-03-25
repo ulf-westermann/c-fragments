@@ -1,5 +1,5 @@
 /** \file
- * Ring buffer.
+ * a queue.
  */
 
 #ifndef QUEUE_H
@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 
-/** CONFIGURATION: To use a different data type, modify it here or define it before including the header file. */
+/** CONFIGURATION: to use a different data type, modify it here or define it before including the header file. */
 #ifndef QUEUE_ENTRY_TYPE
 #define QUEUE_ENTRY_TYPE uint32_t
 #endif
@@ -17,6 +17,9 @@
 #define QUEUE_ENTRY_SIZE sizeof(QUEUE_ENTRY_TYPE)
 
 
+/** internal control structure of queue. to create a queue, create an instance of this type and initialize it
+ * with queue_init().
+ */
 typedef struct queue_s {
     QUEUE_ENTRY_TYPE* buffer;
     uint32_t capacity;
@@ -26,9 +29,26 @@ typedef struct queue_s {
 } queue_t;
 
 
-void queue_init(queue_t* queue, QUEUE_ENTRY_TYPE* buffer, uint32_t length);
+/** initialize queue.
+ * second parameter is a pointer to the externally allocated buffer for the queue.
+ * third parameter is the buffer size in bytes. should be a multiple of QUEUE_ENTRY_SIZE.
+ * returns 0 on success, negative value on error. */
+void queue_init(queue_t* queue, QUEUE_ENTRY_TYPE* buffer, uint32_t buffer_size);
+
+
+/** read from queue and remove read entry.
+ * second parameter received the read value.
+ * returns 0 on success, negative value on error. */
 int queue_read(queue_t* queue, QUEUE_ENTRY_TYPE* value);
+
+
+/** write to queue, fails if queue is full.
+ * second parameter is the value to be stored in the queue.
+ * returns 0 on success, negative value on error. */
 int queue_write(queue_t* queue, QUEUE_ENTRY_TYPE* value);
+
+
+/** get number of items in the queue. */
 uint32_t queue_get_count(queue_t* queue);
 
 
