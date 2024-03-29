@@ -6,6 +6,7 @@
 #define QUEUE_H
 
 
+#include <stdbool.h>
 #include <stdint.h>
 
 
@@ -36,16 +37,23 @@ typedef struct queue_s {
 void queue_init(queue_t* queue, QUEUE_ENTRY_TYPE* buffer, uint32_t buffer_size);
 
 
-/** read from queue and remove read entry.
+/** read from queue without removing entry.
+ * second parameter received the read value.
+ * returns 0 on success, negative value on error. */
+int queue_peek(queue_t* queue, QUEUE_ENTRY_TYPE* value);
+
+
+/** read from queue and remove entry.
  * second parameter received the read value.
  * returns 0 on success, negative value on error. */
 int queue_read(queue_t* queue, QUEUE_ENTRY_TYPE* value);
 
 
-/** write to queue, fails if queue is full.
+/** write to queue, fails if queue is full when overwrite is false.
  * second parameter is the value to be stored in the queue.
+ * third parameter overwrites oldest entry, if queue is full
  * returns 0 on success, negative value on error. */
-int queue_write(queue_t* queue, QUEUE_ENTRY_TYPE* value);
+int queue_write(queue_t* queue, QUEUE_ENTRY_TYPE* value, bool overwrite);
 
 
 /** get number of items in the queue. */

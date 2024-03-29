@@ -22,7 +22,7 @@ clean:
 
 .PHONY: format
 format:
-	clang-format -i --style='{BasedOnStyle: LLVM, IndentWidth: 4, MaxEmptyLinesToKeep: 2, ColumnLimit: 130, PointerAlignment: Left, IndentCaseLabels: true}' *.c *.h
+	clang-format -i --style='{BasedOnStyle: LLVM, IndentWidth: 4, MaxEmptyLinesToKeep: 2, ColumnLimit: 130, PointerAlignment: Left, IndentCaseLabels: true, BreakBeforeBraces: Stroustrup}' *.c *.h
 
 .PHONY: check
 check:
