@@ -47,13 +47,12 @@ int queue_peek(queue_t* queue, void* value);
 int queue_read(queue_t* queue, void* value);
 
 
-/** write to queue, fails if queue is full.
+/** write to queue.
  * @param[in] queue: the queue instance.
  * @param[in] value: the value to be stored in the queue.
+ * @param[in] overwrite: if queue is full, overwrite oldest entry if true, otherwise fail.
  * @return 0 on success, negative value on error. */
-int queue_write(queue_t* queue, void* value);
-
-int queue_overwrite(queue_t* queue, void* value);
+int queue_write(queue_t* queue, void* value, bool overwrite);
 
 
 /** get number of items in the queue.

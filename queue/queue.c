@@ -50,7 +50,7 @@ int queue_read(queue_t* queue, void* value)
     if (queue_peek(queue, value) != 0) {
         return -1;
     }
-    
+
     queue->read_index = (queue->read_index + queue->item_size) % queue->buffer_size;
 
     queue->count -= 1;
@@ -59,35 +59,21 @@ int queue_read(queue_t* queue, void* value)
 }
 
 
-int queue_write(queue_t* queue, void* value)
+int queue_write(queue_t* queue, void* value, bool overwrite)
 {
     ensure(queue != NULL);
     ensure(value != NULL);
 
     if (queue->count * queue->item_size >= queue->buffer_size) {
-        return -1;
+        if (overwrite) {
+            queue->read_index = (queue->read_index + queue->item_size) % queue->buffer_size;
+        }
+        else {
+            return -1;
+        }
     }
     else {
         queue->count += 1;
-    }
-
-    memcpy(&queue->buffer[queue->write_index], value, queue->item_size);
-    queue->write_index = (queue->write_index + queue->item_size) % queue->buffer_size;
-
-    return 0;
-}
-
-
-int queue_overwrite(queue_t* queue, void* value)
-{
-    ensure(queue != NULL);
-    ensure(value != NULL);
-
-    if (queue->count * queue->item_size >= queue->buffer_size) {
-        queue->read_index = (queue->read_index + queue->item_size) % queue->buffer_size;
-    }
-    else {
-        ++queue->count;
     }
 
     memcpy(&queue->buffer[queue->write_index], value, queue->item_size);

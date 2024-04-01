@@ -14,8 +14,8 @@ CFLAGS = -g -std=c99 -Og -Wall -Wpedantic -Wextra -fanalyzer
 $(EXECUTABLE): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
 
-.PHONY: run
-run: $(EXECUTABLE)
+.PHONY: runtest
+runtest: $(EXECUTABLE)
 	./test
 
 .PHONY: clean

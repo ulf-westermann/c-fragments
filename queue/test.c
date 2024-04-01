@@ -16,27 +16,27 @@ int main(void)
     assert((void*)q.buffer == (void*)buffer);
     assert(q.buffer_size == 3 * sizeof(uint32_t));
     assert(q.item_size == 4);
-    
+
     // empty read fails
     assert(queue_read(&q, &read) < 0);
 
     // fill
-    assert(queue_write(&q, &(uint32_t){41}) == 0);
-    assert(queue_write(&q, &(uint32_t){42}) == 0);
-    assert(queue_write(&q, &(uint32_t){43}) == 0);
+    assert(queue_write(&q, &(uint32_t){41}, false) == 0);
+    assert(queue_write(&q, &(uint32_t){42}, false) == 0);
+    assert(queue_write(&q, &(uint32_t){43}, false) == 0);
 
     // queue contains 41, 42, 43. full, put one more should fail
-    assert(queue_write(&q, &(uint32_t){1}) < 0);
+    assert(queue_write(&q, &(uint32_t){1}, false) < 0);
 
     // read 41
     assert(queue_read(&q, &read) == 0);
     assert(read == 41);
 
     // queue contains 42, 43. fill up again
-    assert(queue_write(&q, &(uint32_t){44}) == 0);
+    assert(queue_write(&q, &(uint32_t){44}, false) == 0);
 
     // queue contains 42, 43, 44, oldest gets overwritten
-    assert(queue_overwrite(&q, &(uint32_t){45}) == 0);
+    assert(queue_write(&q, &(uint32_t){45}, true) == 0);
 
     // read 43, 44, 45
     assert(queue_read(&q, &read) == 0);
@@ -52,10 +52,10 @@ int main(void)
     assert(queue_read(&q, &read) < 0);
 
     // fill
-    assert(queue_overwrite(&q, &(uint32_t){100}) == 0);
-    assert(queue_overwrite(&q, &(uint32_t){101}) == 0);
-    assert(queue_overwrite(&q, &(uint32_t){102}) == 0);
-    assert(queue_overwrite(&q, &(uint32_t){103}) == 0);
+    assert(queue_write(&q, &(uint32_t){100}, true) == 0);
+    assert(queue_write(&q, &(uint32_t){101}, true) == 0);
+    assert(queue_write(&q, &(uint32_t){102}, true) == 0);
+    assert(queue_write(&q, &(uint32_t){103}, true) == 0);
 
     // read 101, 102, 103
     assert(queue_read(&q, &read) == 0);
