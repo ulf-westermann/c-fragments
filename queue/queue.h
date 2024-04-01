@@ -6,6 +6,11 @@
 #define QUEUE_H
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -25,40 +30,45 @@ typedef struct queue_s {
 
 
 /** initialize queue.
- * @param[in] queue: the queue instance.
+ * @param[in] self: the queue instance.
  * @param[in] item_size: the size of one buffer entry in bytes.
  * @param[in] buffer: a pointer to the externally allocated buffer for the queue.
  * @param[in] buffer_size the buffer size in bytes. should be a multiple of item_size.
  * @return 0 on success, negative value on error. */
-int queue_init(queue_t* queue, size_t item_size, uint8_t* buffer, size_t buffer_size);
+int queue_init(queue_t* self, size_t item_size, uint8_t* buffer, size_t buffer_size);
 
 
 /** read from queue without removing entry.
- * @param[in] queue: the queue instance.
+ * @param[in] self: the queue instance.
  * @param[out] value: the read value.
  * @return 0 on success, negative value on error. */
-int queue_peek(queue_t* queue, void* value);
+int queue_peek(queue_t* self, void* value);
 
 
 /** read from queue and remove entry.
- * @param[in] queue: the queue instance.
+ * @param[in] self: the queue instance.
  * @param[out] value: the read value.
  * @return 0 on success, negative value on error. */
-int queue_read(queue_t* queue, void* value);
+int queue_read(queue_t* self, void* value);
 
 
 /** write to queue.
- * @param[in] queue: the queue instance.
+ * @param[in] self: the queue instance.
  * @param[in] value: the value to be stored in the queue.
  * @param[in] overwrite: if queue is full, overwrite oldest entry if true, otherwise fail.
  * @return 0 on success, negative value on error. */
-int queue_write(queue_t* queue, void* value, bool overwrite);
+int queue_write(queue_t* self, void* value, bool overwrite);
 
 
 /** get number of items in the queue.
- * @param[in] queue: the queue instance.
+ * @param[in] self: the queue instance.
  * @return the number of items in the queue. */
-uint32_t queue_get_count(queue_t* queue);
+uint32_t queue_get_count(queue_t* self);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif

@@ -3,13 +3,11 @@ RM = trash -f
 
 EXECUTABLE = test
 SRCS = test.c queue.c
-#OBJS = $(addsuffix .o, $(basename $(SRCS)))
 OBJS = $(SRCS:.c=.o)
 DEPS = $(OBJS:.o=.d)
 
 CPPFLAGS = $(INCFLAGS) -MMD -MP
-CFLAGS = -g -std=c99 -Og -Wall -Wpedantic -Wextra -fanalyzer
-#CFLAGS = -g -std=c99 -O3 -Wall -Wpedantic -Wextra -fanalyzer
+CFLAGS = -g -std=c99 -O3 -Wall -Wpedantic -Wextra -fanalyzer
 
 $(EXECUTABLE): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
@@ -24,7 +22,7 @@ clean:
 
 .PHONY: format
 format:
-	clang-format -i --style='{BasedOnStyle: LLVM, IndentWidth: 4, MaxEmptyLinesToKeep: 2, ColumnLimit: 130, PointerAlignment: Left, IndentCaseLabels: true, BreakBeforeBraces: Stroustrup}' *.c *.h
+	clang-format -i *.c *.h
 
 .PHONY: check
 check:
