@@ -1,5 +1,5 @@
 /** \file
- * a queue.
+ * a queue (FIFO).
  */
 
 #ifndef QUEUE_H
@@ -7,23 +7,17 @@
 
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
-
-
-/** CONFIGURATION: to use a different data type, modify it here or define it before including the header file. */
-#ifndef QUEUE_ENTRY_TYPE
-#define QUEUE_ENTRY_TYPE uint32_t
-#endif
-
-#define QUEUE_ENTRY_SIZE sizeof(QUEUE_ENTRY_TYPE)
 
 
 /** internal control structure of queue. to create a queue, create an instance of this type and initialize it
  * with queue_init().
  */
 typedef struct queue_s {
-    QUEUE_ENTRY_TYPE* buffer;
-    uint32_t capacity;
+    size_t item_size;
+    uint8_t* buffer;
+    size_t buffer_size;
     uint32_t count;
     uint32_t read_index;
     uint32_t write_index;
@@ -31,32 +25,40 @@ typedef struct queue_s {
 
 
 /** initialize queue.
- * second parameter is a pointer to the externally allocated buffer for the queue.
- * third parameter is the buffer size in bytes. should be a multiple of QUEUE_ENTRY_SIZE.
- * returns 0 on success, negative value on error. */
-void queue_init(queue_t* queue, QUEUE_ENTRY_TYPE* buffer, uint32_t buffer_size);
+ * @param[in] queue: the queue instance.
+ * @param[in] item_size: the size of one buffer entry in bytes.
+ * @param[in] buffer: a pointer to the externally allocated buffer for the queue.
+ * @param[in] buffer_size the buffer size in bytes. should be a multiple of item_size.
+ * @return 0 on success, negative value on error. */
+int queue_init(queue_t* queue, size_t item_size, uint8_t* buffer, size_t buffer_size);
 
 
 /** read from queue without removing entry.
- * second parameter received the read value.
- * returns 0 on success, negative value on error. */
-int queue_peek(queue_t* queue, QUEUE_ENTRY_TYPE* value);
+ * @param[in] queue: the queue instance.
+ * @param[out] value: the read value.
+ * @return 0 on success, negative value on error. */
+int queue_peek(queue_t* queue, void* value);
 
 
 /** read from queue and remove entry.
- * second parameter received the read value.
- * returns 0 on success, negative value on error. */
-int queue_read(queue_t* queue, QUEUE_ENTRY_TYPE* value);
+ * @param[in] queue: the queue instance.
+ * @param[out] value: the read value.
+ * @return 0 on success, negative value on error. */
+int queue_read(queue_t* queue, void* value);
 
 
-/** write to queue, fails if queue is full when overwrite is false.
- * second parameter is the value to be stored in the queue.
- * third parameter overwrites oldest entry, if queue is full
- * returns 0 on success, negative value on error. */
-int queue_write(queue_t* queue, QUEUE_ENTRY_TYPE* value, bool overwrite);
+/** write to queue, fails if queue is full.
+ * @param[in] queue: the queue instance.
+ * @param[in] value: the value to be stored in the queue.
+ * @return 0 on success, negative value on error. */
+int queue_write(queue_t* queue, void* value);
+
+int queue_overwrite(queue_t* queue, void* value);
 
 
-/** get number of items in the queue. */
+/** get number of items in the queue.
+ * @param[in] queue: the queue instance.
+ * @return the number of items in the queue. */
 uint32_t queue_get_count(queue_t* queue);
 
 

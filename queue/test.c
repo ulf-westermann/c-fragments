@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 
+/** test the queue. */
 int main(void)
 {
     queue_t q;
@@ -10,42 +11,63 @@ int main(void)
     uint32_t read = 0;
 
     // init
-    queue_init(&q, buffer, sizeof(buffer));
+    assert(queue_init(&q, sizeof(uint32_t), (uint8_t*)buffer, sizeof(buffer)) == 0);
 
-    // emtpy read should fail
+    assert((void*)q.buffer == (void*)buffer);
+    assert(q.buffer_size == 3 * sizeof(uint32_t));
+    assert(q.item_size == 4);
+    
+    // empty read fails
     assert(queue_read(&q, &read) < 0);
 
     // fill
-    assert(queue_write(&q, &(uint32_t){41}, false) == 0);
-    assert(queue_write(&q, &(uint32_t){42}, false) == 0);
-    assert(queue_write(&q, &(uint32_t){43}, false) == 0);
+    assert(queue_write(&q, &(uint32_t){41}) == 0);
+    assert(queue_write(&q, &(uint32_t){42}) == 0);
+    assert(queue_write(&q, &(uint32_t){43}) == 0);
 
     // queue contains 41, 42, 43. full, put one more should fail
-    assert(queue_write(&q, &(uint32_t){1}, false) <= 0);
+    assert(queue_write(&q, &(uint32_t){1}) < 0);
 
-    // read first
+    // read 41
     assert(queue_read(&q, &read) == 0);
     assert(read == 41);
 
     // queue contains 42, 43. fill up again
-    assert(queue_write(&q, &(uint32_t){44}, false) == 0);
+    assert(queue_write(&q, &(uint32_t){44}) == 0);
 
-    // queue contains 42, 43, 44. overwrite oldest
-    assert(queue_write(&q, &(uint32_t){2}, true) == 0);
+    // queue contains 42, 43, 44, oldest gets overwritten
+    assert(queue_overwrite(&q, &(uint32_t){45}) == 0);
 
-    // queue contains 2, 43, 44. read oldest, which was overwritten
-    assert(queue_read(&q, &read) == 0);
-    assert(read == 2);
-
-    // read next
+    // read 43, 44, 45
     assert(queue_read(&q, &read) == 0);
     assert(read == 43);
 
-    // read next
     assert(queue_read(&q, &read) == 0);
     assert(read == 44);
 
-    // empty read should fail again
+    assert(queue_read(&q, &read) == 0);
+    assert(read == 45);
+
+    // empty read fails
+    assert(queue_read(&q, &read) < 0);
+
+    // fill
+    assert(queue_overwrite(&q, &(uint32_t){100}) == 0);
+    assert(queue_overwrite(&q, &(uint32_t){101}) == 0);
+    assert(queue_overwrite(&q, &(uint32_t){102}) == 0);
+    assert(queue_overwrite(&q, &(uint32_t){103}) == 0);
+
+    // read 101, 102, 103
+    assert(queue_read(&q, &read) == 0);
+    assert(read == 101);
+
+    assert(queue_read(&q, &read) == 0);
+    assert(read == 102);
+
+    assert(queue_read(&q, &read) == 0);
+    assert(read == 103);
+
+    // empty read fails
     assert(queue_read(&q, &read) < 0);
 
     printf("test success\n");

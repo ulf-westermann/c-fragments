@@ -1,78 +1,97 @@
 #include "queue.h"
-#include <assert.h>
 #include <stddef.h>
 #include <string.h>
 
 
-/* enable for custom assert handling:
-#ifndef NDEBUG
-#include <stdio.h>
-#undef assert
-#define assert(expr) ((expr) ? (void)0 : (void)printf("%s:%d (%s): assertion failed\n", __FILE__, __LINE__, __func__))
-#endif*/
+#ifdef NDEBUG
+#define ensure(expr) ((void)0)
+#else
+#include <assert.h>
+#define ensure(expr) assert(expr)
+#endif
 
 
-void queue_init(queue_t* queue, QUEUE_ENTRY_TYPE* buffer, uint32_t buffer_size)
+int queue_init(queue_t* queue, size_t item_size, uint8_t* buffer, size_t buffer_size)
 {
-    assert(queue != NULL);
-    assert(buffer != NULL);
-    assert(buffer_size >= QUEUE_ENTRY_SIZE);
-    assert(buffer_size % QUEUE_ENTRY_SIZE == 0); // could be removed, if desired
+    ensure(queue != NULL);
+    ensure(item_size > 0);
+    ensure(buffer != NULL);
+    ensure(buffer_size >= item_size);
+    ensure(buffer_size % item_size == 0);
 
+    queue->item_size = item_size;
     queue->buffer = buffer;
-    queue->capacity = buffer_size / QUEUE_ENTRY_SIZE;
+    queue->buffer_size = buffer_size;
     queue->count = 0;
     queue->read_index = 0;
     queue->write_index = 0;
+
+    return 0;
 }
 
 
-int queue_peek(queue_t* queue, QUEUE_ENTRY_TYPE* value)
+int queue_peek(queue_t* queue, void* value)
 {
-    assert(queue != NULL);
-    assert(value != NULL);
+    ensure(queue != NULL);
+    ensure(value != NULL);
 
     if (queue->count == 0) {
         return -1;
     }
 
-    memcpy(value, &queue->buffer[queue->read_index], QUEUE_ENTRY_SIZE);
+    memcpy(value, &queue->buffer[queue->read_index], queue->item_size);
 
     return 0;
 }
 
 
-int queue_read(queue_t* queue, QUEUE_ENTRY_TYPE* value)
+int queue_read(queue_t* queue, void* value)
 {
-    if (queue_peek(queue, value) < 0) {
+    if (queue_peek(queue, value) != 0) {
         return -1;
     }
+    
+    queue->read_index = (queue->read_index + queue->item_size) % queue->buffer_size;
 
-    queue->read_index = (queue->read_index + 1) % queue->capacity;
-    queue->count--;
+    queue->count -= 1;
 
     return 0;
 }
 
 
-int queue_write(queue_t* queue, QUEUE_ENTRY_TYPE* value, bool overwrite)
+int queue_write(queue_t* queue, void* value)
 {
-    assert(queue != NULL);
-    assert(value != NULL);
+    ensure(queue != NULL);
+    ensure(value != NULL);
 
-    if (queue->count >= queue->capacity) {
-        if (!overwrite) {
-            return -1;
-        }
+    if (queue->count * queue->item_size >= queue->buffer_size) {
+        return -1;
+    }
+    else {
+        queue->count += 1;
+    }
 
-        queue->read_index = queue->write_index;
+    memcpy(&queue->buffer[queue->write_index], value, queue->item_size);
+    queue->write_index = (queue->write_index + queue->item_size) % queue->buffer_size;
+
+    return 0;
+}
+
+
+int queue_overwrite(queue_t* queue, void* value)
+{
+    ensure(queue != NULL);
+    ensure(value != NULL);
+
+    if (queue->count * queue->item_size >= queue->buffer_size) {
+        queue->read_index = (queue->read_index + queue->item_size) % queue->buffer_size;
     }
     else {
         ++queue->count;
     }
 
-    memcpy(&queue->buffer[queue->write_index], value, QUEUE_ENTRY_SIZE);
-    queue->write_index = (queue->write_index + 1) % queue->capacity;
+    memcpy(&queue->buffer[queue->write_index], value, queue->item_size);
+    queue->write_index = (queue->write_index + queue->item_size) % queue->buffer_size;
 
     return 0;
 }
@@ -80,7 +99,7 @@ int queue_write(queue_t* queue, QUEUE_ENTRY_TYPE* value, bool overwrite)
 
 uint32_t queue_get_count(queue_t* queue)
 {
-    assert(queue != NULL);
+    ensure(queue != NULL);
 
     return queue->count;
 }
