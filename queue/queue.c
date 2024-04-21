@@ -4,20 +4,20 @@
 
 
 #ifdef NDEBUG
-    #define ensure(expr) ((void)0)
+    #define ENSURE(expr) ((void)0)
 #else
     #include <assert.h>
-    #define ensure(expr) assert(expr)
+    #define ENSURE(expr) assert(expr)
 #endif
 
 
 int queue_init(queue_t* self, size_t item_size, uint8_t* buffer, size_t buffer_size)
 {
-    ensure(self != NULL);
-    ensure(item_size > 0);
-    ensure(buffer != NULL);
-    ensure(buffer_size >= item_size);
-    ensure(buffer_size % item_size == 0);
+    ENSURE(self != NULL);
+    ENSURE(item_size > 0);
+    ENSURE(buffer != NULL);
+    ENSURE(buffer_size >= item_size);
+    ENSURE(buffer_size % item_size == 0);
 
     self->item_size = item_size;
     self->buffer = buffer;
@@ -32,8 +32,8 @@ int queue_init(queue_t* self, size_t item_size, uint8_t* buffer, size_t buffer_s
 
 int queue_peek(queue_t* self, void* value)
 {
-    ensure(self != NULL);
-    ensure(value != NULL);
+    ENSURE(self != NULL);
+    ENSURE(value != NULL);
 
     if (self->count == 0) {
         return -1;
@@ -61,8 +61,8 @@ int queue_read(queue_t* self, void* value)
 
 int queue_write(queue_t* self, void* value, bool overwrite)
 {
-    ensure(self != NULL);
-    ensure(value != NULL);
+    ENSURE(self != NULL);
+    ENSURE(value != NULL);
 
     if (self->count * self->item_size >= self->buffer_size) {
         if (overwrite) {
@@ -85,7 +85,7 @@ int queue_write(queue_t* self, void* value, bool overwrite)
 
 uint32_t queue_get_count(queue_t* self)
 {
-    ensure(self != NULL);
+    ENSURE(self != NULL);
 
     return self->count;
 }

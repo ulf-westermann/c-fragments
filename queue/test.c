@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 
-/** test the queue. */
+/** test the queue */
 int main(void)
 {
     queue_t q;
