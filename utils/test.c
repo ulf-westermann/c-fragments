@@ -11,7 +11,7 @@
 #include "utils.h"
 
 
-/** test utils */
+// test
 int main(void)
 {
     unsigned int value = 0x55;
