@@ -67,7 +67,7 @@
         #define ENSURE(EXPRESSION)                                                                                               \
             do {                                                                                                                 \
                 if (!(EXPRESSION)) {                                                                                             \
-                    fprintf(stderr, "%s:%d: ensure failed in %s (\"" #EXPRESSION "\")\n", __FILE__, __LINE__, __func__);                               \
+                    fprintf(stderr, "%s:%d: ensure failed in %s (\"" #EXPRESSION "\")\n", __FILE__, __LINE__, __func__);         \
                     while (1)                                                                                                    \
                         ;                                                                                                        \
                 }                                                                                                                \
@@ -86,6 +86,29 @@
                 enum { __ASSERT_STATIC__ = 1 / (expression) }                                                                    \
             } while (0)
     #endif
+#endif
+
+
+// endianess
+#ifdef USE_ENDIANESS
+    #define IS_LITTLE_ENDIAN (*((uint8_t*)(&(uint32_t){1})))
+
+    #include <stdint.h>
+
+union uint16_u {
+    uint16_t ui16;
+    uint8_t ui8[2];
+};
+
+union uint32_u {
+    uint32_t ui32;
+    uint8_t ui8[4];
+};
+
+union uint64_u {
+    uint64_t ui64;
+    uint8_t ui8[8];
+};
 #endif
 
 
