@@ -4,9 +4,11 @@
 
 
 #ifdef NDEBUG
+    #undef ENSURE
     #define ENSURE(expr) ((void)0)
 #else
     #include <assert.h>
+    #undef ENSURE
     #define ENSURE(expr) assert(expr)
 #endif
 

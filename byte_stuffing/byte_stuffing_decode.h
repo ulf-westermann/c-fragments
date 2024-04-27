@@ -15,6 +15,14 @@ extern "C" {
 #include <stdint.h>
 
 
+#ifdef NDEBUG
+    #define BYTE_STUFFING_DECODE_ENSURE(expr) ((void)0)
+#else
+    #include <assert.h>
+    #define BYTE_STUFFING_DECODE_ENSURE(expr) assert(expr)
+#endif
+
+
 #define DECODE_DELIMITER 0x7e
 #define DECODE_ESCAPE 0x7d
 
@@ -24,13 +32,11 @@ extern "C" {
  * \param[in] current_byte
  * \param[in] next_byte
  * \param[out] decoded_byte
- * \return error (-1) or number of consumed bytes (1 or 2)
+ * \return number of consumed bytes (1 or 2) or 0 in case of delimiter byte
  */
 static inline int byte_stuffing_decode(uint_least8_t current_byte, uint_least8_t next_byte, uint_least8_t* decoded_byte)
 {
-    if (!decoded_byte) {
-        return -1;
-    }
+    BYTE_STUFFING_DECODE_ENSURE(decoded_byte);
 
     if (current_byte == DECODE_DELIMITER) {
         return 0;

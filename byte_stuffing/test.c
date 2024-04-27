@@ -16,10 +16,7 @@ int main(void)
     int encoded_length = 0;
 
     for (int i = 0; i < data_length; ++i) {
-        //printf("0x%x ", data[i]);
         int ret = byte_stuffing_encode(data[i], &encoded[encoded_length]);
-
-        assert(ret >= 0);
         encoded_length += ret;
     }
 

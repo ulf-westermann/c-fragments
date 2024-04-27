@@ -15,6 +15,14 @@ extern "C" {
 #include <stdint.h>
 
 
+#ifdef NDEBUG
+    #define BYTE_STUFFING_ENCODE_ENSURE(expr) ((void)0)
+#else
+    #include <assert.h>
+    #define BYTE_STUFFING_ENCODE_ENSURE(expr) assert(expr)
+#endif
+
+
 #define DECODE_DELIMITER 0x7e
 #define DECODE_ESCAPE 0x7d
 
@@ -23,13 +31,11 @@ extern "C" {
  * encode byte stuffing.
  * \param[in] byte_to_encode
  * \param[out] encoded_bytes
- * \return error (-1) or number of encoded bytes (1 or 2)
+ * \return number of encoded bytes (1 or 2)
  */
 static inline int byte_stuffing_encode(uint_least8_t byte_to_encode, uint8_t encoded_bytes[2])
 {
-    if (!encoded_bytes) {
-        return -1;
-    }
+    BYTE_STUFFING_ENCODE_ENSURE(encoded_bytes);
 
     if (byte_to_encode == DECODE_DELIMITER || byte_to_encode == DECODE_ESCAPE) {
         encoded_bytes[0] = DECODE_ESCAPE;
