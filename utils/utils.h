@@ -32,7 +32,7 @@
 #endif
 
 
-// macros to check result of operation
+// macros to check results of operations
 #ifdef USE_CHECKS
     #include <stdint.h>
 
@@ -89,7 +89,7 @@
 #endif
 
 
-/** template for X macros. */
+// template for X macros
 #if 0
     #define LIST_OF_SOMETHING                                                                                                    \
         X(foo, 1)                                                                                                                \
