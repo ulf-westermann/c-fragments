@@ -1,4 +1,8 @@
+#define USE_FLETCHER16
+#define USE_FLETCHER32
+
 #include "fletcher.h"
+
 #include <assert.h>
 #include <stdio.h>
 

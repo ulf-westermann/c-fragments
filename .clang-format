@@ -1,9 +1,9 @@
 BasedOnStyle: LLVM
-IndentWidth: 4
-MaxEmptyLinesToKeep: 2
+AlignEscapedNewlines: Left
+BreakBeforeBraces: Stroustrup
 ColumnLimit: 130
-PointerAlignment: Left
 IndentCaseLabels: true
 IndentPPDirectives: BeforeHash
-BreakBeforeBraces: Stroustrup
-
+IndentWidth: 4
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Left

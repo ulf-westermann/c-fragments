@@ -6,19 +6,19 @@
 #ifdef USE_BITS
     #define GETBIT(VALUE, BITNUM) ((VALUE & (1 << BITNUM)) >> BITNUM)
 
-    #define SETBIT(VALUE, BITNUM)                                                                                                \
-        do {                                                                                                                     \
-            VALUE |= (1 << BITNUM)                                                                                               \
+    #define SETBIT(VALUE, BITNUM)  \
+        do {                       \
+            VALUE |= (1 << BITNUM) \
         } while (0)
 
-    #define CLRBIT(VALUE, BITNUM)                                                                                                \
-        do {                                                                                                                     \
-            VALUE &= ~(1 << BITNUM)                                                                                              \
+    #define CLRBIT(VALUE, BITNUM)   \
+        do {                        \
+            VALUE &= ~(1 << BITNUM) \
         } while (0)
 
-    #define TGLBIT(VALUE, BITNUM)                                                                                                \
-        do {                                                                                                                     \
-            VALUE ^= (1 << BITNUM)                                                                                               \
+    #define TGLBIT(VALUE, BITNUM)  \
+        do {                       \
+            VALUE ^= (1 << BITNUM) \
         } while (0)
 #endif
 
@@ -64,13 +64,13 @@
         #include <stdbool.h>
         #include <stdio.h>
 
-        #define ENSURE(EXPRESSION)                                                                                               \
-            do {                                                                                                                 \
-                if (!(EXPRESSION)) {                                                                                             \
-                    fprintf(stderr, "%s:%d: ensure failed in %s (\"" #EXPRESSION "\")\n", __FILE__, __LINE__, __func__);         \
-                    while (1)                                                                                                    \
-                        ;                                                                                                        \
-                }                                                                                                                \
+        #define ENSURE(EXPRESSION)                                                                                       \
+            do {                                                                                                         \
+                if (!(EXPRESSION)) {                                                                                     \
+                    fprintf(stderr, "%s:%d: ensure failed in %s (\"" #EXPRESSION "\")\n", __FILE__, __LINE__, __func__); \
+                    while (1)                                                                                            \
+                        ;                                                                                                \
+                }                                                                                                        \
             } while (0)
     #else
         #define ENSURE ((void)0)
@@ -81,9 +81,9 @@
 // static assert for C standards before C11
 #ifdef USE_STATIC_ASSERT
     #if __STDC_VERSION__ < 201112L
-        #define static_assert(expression, message)                                                                               \
-            do {                                                                                                                 \
-                enum { __ASSERT_STATIC__ = 1 / (expression) }                                                                    \
+        #define static_assert(expression, message)            \
+            do {                                              \
+                enum { __ASSERT_STATIC__ = 1 / (expression) } \
             } while (0)
     #endif
 #endif
@@ -114,9 +114,9 @@ union uint64_u {
 
 // template for X macros
 #if 0
-    #define LIST_OF_SOMETHING                                                                                                    \
-        X(foo, 1)                                                                                                                \
-        X(bar, 2)                                                                                                                \
+    #define LIST_OF_SOMETHING \
+        X(foo, 1)             \
+        X(bar, 2)             \
         X(baz, 42) \
 
     // first use of list

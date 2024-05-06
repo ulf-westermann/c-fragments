@@ -17,6 +17,7 @@ extern "C" {
 #include <stdint.h>
 
 
+#ifdef USE_FLETCHER16
 /**
  * calculate fletcher16 checksum. init values are normally set to 0. result arguments contain the result after calculation. the
  * function can be used to calculate the checksum over data of a fixed length. it is also possible to calculate the checksum of a
@@ -49,8 +50,10 @@ static inline int fletcher16(uint8_t c0_init, uint8_t c1_init, const uint8_t* co
 
     return 0;
 }
+#endif
 
 
+#ifdef USE_FLETCHER32
 /**
  * calculate fletcher32 checksum. init values are normally set to 0. result arguments contain the result after calculation. the
  * function can be used to calculate the checksum over data of a fixed length. it is also possible to calculate the checksum of a
@@ -83,6 +86,7 @@ static inline int fletcher32(uint16_t c0_init_value, uint16_t c1_init_value, con
 
     return 0;
 }
+#endif
 
 
 #ifdef __cplusplus
