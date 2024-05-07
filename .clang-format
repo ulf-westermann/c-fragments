@@ -1,5 +1,6 @@
 BasedOnStyle: LLVM
 AlignEscapedNewlines: Left
+AllowShortFunctionsOnASingleLine: None
 BreakBeforeBraces: Stroustrup
 ColumnLimit: 130
 IndentCaseLabels: true
