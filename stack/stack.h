@@ -28,18 +28,58 @@ typedef struct stack_s {
 
 
 /** initialize stack.
- * @param[in] self: the stack instance.
- * @param[in] buffer: a pointer to the externally allocated buffer for the stack.
- * @param[in] buffer_size the buffer size in bytes.
+ * @param[in] self: stack instance.
+ * @param[in] buffer: pointer to the externally allocated buffer for the stack.
+ * @param[in] buffer_size: size of buffer in bytes.
  * @return 0 on success, negative value on error. */
 int stack_init(stack_t* self, uint8_t* buffer, size_t buffer_size);
 
 
-int stack_push(stack_t* self, uint8_t* data, size_t data_size);
-int stack_pop(stack_t* self);
-int stack_pop_all(stack_t* self);
+/** put data onto the top of the stack.
+ * @param[in] self: the stack instance.
+ * @param[in] data: pointer to data.
+ * @param[in] data_length: length of data in bytes.
+ * @return 0 on success, negative value on error. */
+int stack_push(stack_t* self, uint8_t* data, size_t data_length);
+
+
+/** remove topmost item from stack.
+ * @param[in] self: the stack instance.
+ * @param[out] data: data from stack.
+ * @param[in] max_data_size: maximum size of data to copy. fails if size is not large enough.
+ * @param[out] data_length: length of data from stack in bytes.
+ * @return 0 on success, negative value on error. */
+int stack_pop(stack_t* self, uint8_t* data, size_t max_data_size, size_t* data_length);
+
+
+/** remove topmost item.
+ * @param[in] self: the stack instance.
+ * @return 0 on success, negative value on error. */
+int stack_remove_top(stack_t* self);
+
+
+/** remove all items from stack.
+ * @param[in] self: the stack instance.
+ * @return 0 on success, negative value on error. */
+int stack_remove_all(stack_t* self);
+
+
+/** put a copy of another stack item on the top of the stack.
+ * @param[in] self: the stack instance.
+ * @param[in] index: index of the item to copy. 0 is the topmost item.
+ * @return 0 on success, negative value on error. */
 int stack_copy_from(stack_t* self, uint32_t index);
+
+
+/** put a copy of the item currently in the top position on the top of the stack.
+ * @param[in] self: the stack instance.
+ * @return 0 on success, negative value on error. */
 int stack_dup(stack_t* self);
+
+
+/** swap the two topmost items on the stack.
+ * @param[in] self: the stack instance.
+ * @return 0 on success, negative value on error. */
 int stack_swap(stack_t* self);
 
 
