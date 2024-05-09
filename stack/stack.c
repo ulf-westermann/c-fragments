@@ -26,15 +26,13 @@ int stack_init(stack_t* self, uint8_t* buffer, size_t buffer_size)
 #include <stdio.h>
 int stack_push(stack_t* self, uint8_t* data, size_t data_length)
 {
-    printf("stack_push()...\n");
-
     if (self == NULL || data == NULL) {
         printf("1\n");
         return -1;
     }
 
     uint8_t* new_stack_top = self->stack_top + data_length + sizeof(size_t);
-    printf("buffer_end: %u, new_stack_top: %u\n", (uint32_t)self->buffer_end, (uint32_t)new_stack_top);
+    printf("buffer_end: %lu, new_stack_top: %lu\n", (uintptr_t)self->buffer_end, (uintptr_t)new_stack_top);
 
     if (new_stack_top > self->buffer_end) {
         printf("new_stack_top > self->buffer_end\n");
@@ -53,8 +51,6 @@ int stack_push(stack_t* self, uint8_t* data, size_t data_length)
 
 int stack_pop(stack_t* self, uint8_t* data, size_t max_data_size, size_t* data_length)
 {
-    printf("stack_pop()...\n");
-
     if (self == NULL || data == NULL || data_length == 0 || self->count == 0) {
         return -1;
     }
@@ -76,8 +72,6 @@ int stack_pop(stack_t* self, uint8_t* data, size_t max_data_size, size_t* data_l
 
 int stack_remove_top(stack_t* self)
 {
-    printf("stack_remove_top()...\n");
-
     if (self == NULL || self->count == 0) {
         return -1;
     }
@@ -91,17 +85,14 @@ int stack_remove_top(stack_t* self)
 
 int stack_remove_all(stack_t* self)
 {
-    printf("stack_remove_all()...\n");
-
     return stack_init(self, self->buffer, self->buffer_end - self->buffer);
 }
 
 
 int stack_copy_from(stack_t* self, uint32_t index)
 {
-    printf("stack_copy_from()...\n");
-
-    if (self == NULL) {
+    if (index >= self->count)
+    {
         return -1;
     }
 
@@ -111,18 +102,14 @@ int stack_copy_from(stack_t* self, uint32_t index)
 
 int stack_dup(stack_t* self)
 {
-    printf("stack_dup()...\n");
-
     return stack_copy_from(self, 0);
 }
 
 
 int stack_swap(stack_t* self)
 {
-    printf("stack_swap()...\n");
-
-    if (self == NULL) {
-        return 0;
+    if (self == NULL || self->count < 2) {
+        return -1;
     }
 
     uint8_t* first_item_data_ptr = get_item_data_ptr_from(self->stack_top, 1);
@@ -145,13 +132,9 @@ int stack_swap(stack_t* self)
 
 size_t stack_get_count(stack_t* self)
 {
-    printf("stack_get_count()...\n");
-
     if (self == NULL) {
         return 0;
     }
-
-    printf("count: %u\n", self->count);
 
     return self->count;
 }
@@ -159,13 +142,11 @@ size_t stack_get_count(stack_t* self)
 
 static size_t get_item_size(const uint8_t* const item_top)
 {
-    printf("get_item_size()...\n");
-
     size_t item_size;
 
     memcpy(&item_size, item_top - sizeof(size_t), sizeof(size_t));
 
-    printf("item_size: %u\n", item_size);
+    printf("item_size: %lu\n", item_size);
 
     return item_size;
 }
@@ -173,8 +154,6 @@ static size_t get_item_size(const uint8_t* const item_top)
 
 static size_t get_item_size_from(uint8_t* item_top, uint32_t index)
 {
-    printf("get_item_size_from()...\n");
-
     for (uint32_t i = 0; i < index; i += 1) {
         item_top -= get_item_size(item_top) + sizeof(size_t);
     }
@@ -185,16 +164,12 @@ static size_t get_item_size_from(uint8_t* item_top, uint32_t index)
 
 static uint8_t* get_item_data_ptr(uint8_t* const item_top)
 {
-    printf("get_item_data_ptr()...\n");
-
     return item_top - sizeof(size_t) - get_item_size(item_top);
 }
 
 
 static uint8_t* get_item_data_ptr_from(uint8_t* item_top, uint32_t index)
 {
-    printf("get_item_data_ptr_from()...\n");
-
     for (uint32_t i = 0; i < index; i += 1) {
         item_top -= get_item_size(item_top) + sizeof(size_t);
     }
