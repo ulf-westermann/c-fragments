@@ -3,8 +3,8 @@
 #include <string.h>
 
 
-static size_t get_item_size(const uint8_t* const item_top);
-static size_t get_item_size_from(uint8_t* item_top, uint32_t index);
+static size_t get_item_length(const uint8_t* const item_top);
+static size_t get_item_length_from(uint8_t* item_top, uint32_t index);
 static uint8_t* get_item_data_ptr(uint8_t* const item_top);
 static uint8_t* get_item_data_ptr_from(uint8_t* item_top, uint32_t index);
 
@@ -27,15 +27,12 @@ int stack_init(stack_t* self, uint8_t* buffer, size_t buffer_size)
 int stack_push(stack_t* self, uint8_t* data, size_t data_length)
 {
     if (self == NULL || data == NULL) {
-        printf("1\n");
         return -1;
     }
 
     uint8_t* new_stack_top = self->stack_top + data_length + sizeof(size_t);
-    printf("buffer_end: %lu, new_stack_top: %lu\n", (uintptr_t)self->buffer_end, (uintptr_t)new_stack_top);
 
     if (new_stack_top > self->buffer_end) {
-        printf("new_stack_top > self->buffer_end\n");
         return -1;
     }
 
@@ -55,7 +52,7 @@ int stack_pop(stack_t* self, uint8_t* data, size_t max_data_size, size_t* data_l
         return -1;
     }
 
-    *data_length = get_item_size(self->stack_top);
+    *data_length = get_item_length(self->stack_top);
 
     if (max_data_size < *data_length) {
         return -1;
@@ -76,7 +73,7 @@ int stack_remove_top(stack_t* self)
         return -1;
     }
 
-    self->stack_top -= get_item_size(self->stack_top);
+    self->stack_top -= get_item_length(self->stack_top) + sizeof(size_t);
     self->count -= 1;
 
     return 0;
@@ -96,7 +93,7 @@ int stack_copy_from(stack_t* self, uint32_t index)
         return -1;
     }
 
-    return stack_push(self, get_item_data_ptr_from(self->stack_top, index), get_item_size_from(self->stack_top, index));
+    return stack_push(self, get_item_data_ptr_from(self->stack_top, index), get_item_length_from(self->stack_top, index));
 }
 
 
@@ -112,19 +109,26 @@ int stack_swap(stack_t* self)
         return -1;
     }
 
-    uint8_t* first_item_data_ptr = get_item_data_ptr_from(self->stack_top, 1);
-    size_t second_item_data_size = get_item_size_from(self->stack_top, 0);
+    size_t a_length = get_item_length(self->stack_top) + sizeof(size_t);
+    size_t b_length = get_item_length_from(self->stack_top, 1) + sizeof(size_t);
+    size_t stack_free = self->stack_top > self->buffer_end ? 0 : self->buffer_end - self->stack_top;
 
-    stack_copy_from(self, 1); // make temp copy of first
-    stack_copy_from(self, 1); // make temp copy of second
+    if (stack_free < a_length + b_length) {
+        return -1;
+    }
 
-    memcpy(first_item_data_ptr, get_item_data_ptr(self->stack_top), get_item_size(self->stack_top) + sizeof(size_t)); // move temp copy of second to former place of first
+    uint8_t* mem_start_ptr = get_item_data_ptr_from(self->stack_top, 1);
 
-    stack_remove_top(self); // remove temp copy of second
+    stack_copy_from(self, 1); // make temp copy of B
+    stack_copy_from(self, 1); // make temp copy of A, is now at top of stack
 
-    memcpy(first_item_data_ptr + second_item_data_size + sizeof(size_t), get_item_data_ptr(self->stack_top), get_item_size(self->stack_top) + sizeof(size_t)); // move temp copy of first to end of new second
+    memcpy(mem_start_ptr, get_item_data_ptr(self->stack_top), a_length); // move temp copy of A to old place of B
+    stack_remove_top(self); // remove temp copy of A, temp copy of B is now at top of stack
 
-    stack_remove_top(self); // remove temp copy of first
+    uint8_t* temp_b_data_ptr = get_item_data_ptr(self->stack_top);
+    memcpy(mem_start_ptr + a_length, temp_b_data_ptr, b_length); // move temp copy B to end of new A position
+
+    stack_remove_top(self); // remove temp copy of B
 
     return 0;
 }
@@ -140,40 +144,37 @@ size_t stack_get_count(stack_t* self)
 }
 
 
-static size_t get_item_size(const uint8_t* const item_top)
+static size_t get_item_length(const uint8_t* const item_top)
 {
     size_t item_size;
 
     memcpy(&item_size, item_top - sizeof(size_t), sizeof(size_t));
 
-    printf("item_size: %lu\n", item_size);
-
     return item_size;
 }
 
 
-static size_t get_item_size_from(uint8_t* item_top, uint32_t index)
+static size_t get_item_length_from(uint8_t* item_top, uint32_t index)
 {
     for (uint32_t i = 0; i < index; i += 1) {
-        item_top -= get_item_size(item_top) + sizeof(size_t);
+        item_top -= get_item_length(item_top) + sizeof(size_t);
     }
 
-    return get_item_size(item_top);
+    return get_item_length(item_top);
 }
 
 
 static uint8_t* get_item_data_ptr(uint8_t* const item_top)
 {
-    return item_top - sizeof(size_t) - get_item_size(item_top);
+    return item_top - sizeof(size_t) - get_item_length(item_top);
 }
 
 
 static uint8_t* get_item_data_ptr_from(uint8_t* item_top, uint32_t index)
 {
     for (uint32_t i = 0; i < index; i += 1) {
-        item_top -= get_item_size(item_top) + sizeof(size_t);
+        item_top -= get_item_length(item_top) + sizeof(size_t);
     }
 
     return get_item_data_ptr(item_top);
 }
-
