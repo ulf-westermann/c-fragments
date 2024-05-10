@@ -1,5 +1,5 @@
 /** \file
- * a queue (FIFO).
+ * a stack (LIFO).
  */
 
 #ifndef STACK_H
