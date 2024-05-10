@@ -47,10 +47,6 @@ static void test_empty(void)
     assert(stack_pop(&s, read_buffer, 1, &read_length) < 0);
     assert(stack_get_count(&s) == 0);
 
-    printf("stack_dup(). should fail...\n");
-    assert(stack_dup(&s) < 0);
-    assert(stack_get_count(&s) == 0);
-
     printf("stack_swap(). should fail...\n");
     assert(stack_swap(&s) < 0);
     assert(stack_get_count(&s) == 0);
@@ -86,10 +82,6 @@ static void test_full(void)
     // tests with full stack
     printf("stack_push(). should fail...\n");
     assert(stack_push(&s, (uint8_t[]){10}, 1) < 0);
-    assert(stack_get_count(&s) == 2);
-
-    printf("stack_dup(). should fail...\n");
-    assert(stack_dup(&s) < 0);
     assert(stack_get_count(&s) == 2);
 
     printf("stack_copy_from(). should fail...\n");
@@ -148,8 +140,8 @@ static void test_nominal(void)
     assert(stack_get_count(&s) == 3);
     print_stack(&s);
 
-    printf("stack_dup(). stack contains 1,2;3,4;5,6. should succeed...\n");
-    assert(stack_dup(&s) == 0);
+    printf("stack_copy_from(). stack contains 1,2;3,4;5,6. should succeed...\n");
+    assert(stack_copy_from(&s, 0) == 0);
     assert(stack_get_count(&s) == 4);
     print_stack(&s);
 

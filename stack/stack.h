@@ -71,12 +71,6 @@ int stack_remove_all(stack_t* self);
 int stack_copy_from(stack_t* self, uint32_t index);
 
 
-/** put a copy of the item currently in the top position on the top of the stack.
- * @param[in] self: the stack instance.
- * @return 0 on success, negative value on error. */
-int stack_dup(stack_t* self);
-
-
 /** swap the two topmost items on the stack.
  * @param[in] self: the stack instance.
  * @return 0 on success, negative value on error. */
@@ -89,18 +83,18 @@ int stack_swap(stack_t* self);
 size_t stack_get_count(stack_t* self);
 
 
-/** get data length of item at stack index.
- * @param[in] self: the stack instance.
- * @param[in] index: index of the item. 0 is the top item.
- * @return length in bytes. */
-size_t stack_get_data_length_at(stack_t* self, uint32_t index);
-
-
 /** get data pointer of item at stack index.
  * @param[in] self: the stack instance.
  * @param[in] index: index of the item. 0 is the top item.
  * @return pointer to start of data. */
 uint8_t* stack_get_data_ptr_at(stack_t* self, uint32_t index);
+
+
+/** get data length of item at stack index.
+ * @param[in] self: the stack instance.
+ * @param[in] index: index of the item. 0 is the top item.
+ * @return length in bytes. */
+size_t stack_get_data_length_at(stack_t* self, uint32_t index);
 
 
 #ifdef __cplusplus

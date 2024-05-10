@@ -94,12 +94,6 @@ int stack_copy_from(stack_t* self, uint32_t index)
 }
 
 
-int stack_dup(stack_t* self)
-{
-    return stack_copy_from(self, 0);
-}
-
-
 int stack_swap(stack_t* self)
 {
     if (self == NULL || self->count < 2) {
