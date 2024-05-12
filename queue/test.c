@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 
-// test
 int main(void)
 {
     queue_t q;
@@ -73,4 +72,10 @@ int main(void)
     printf("test success\n");
 
     return 0;
+}
+
+
+void cbmc(void)
+{
+    main();
 }

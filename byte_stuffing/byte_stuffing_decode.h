@@ -15,11 +15,15 @@ extern "C" {
 #include <stdint.h>
 
 
-#ifdef NDEBUG
-    #define BYTE_STUFFING_DECODE_ENSURE(expr) ((void)0)
-#else
-    #include <assert.h>
-    #define BYTE_STUFFING_DECODE_ENSURE(expr) assert(expr)
+#ifndef ENSURE
+    #ifdef NDEBUG
+        #undef ENSURE
+        #define ENSURE(expr) ((void)0)
+    #else
+        #include <assert.h>
+        #undef ENSURE
+        #define ENSURE(expr) assert(expr)
+    #endif
 #endif
 
 
@@ -36,7 +40,7 @@ extern "C" {
  */
 static inline int byte_stuffing_decode(uint_least8_t current_byte, uint_least8_t next_byte, uint_least8_t* decoded_byte)
 {
-    BYTE_STUFFING_DECODE_ENSURE(decoded_byte);
+    ENSURE(decoded_byte);
 
     if (current_byte == DECODE_DELIMITER) {
         return 0;

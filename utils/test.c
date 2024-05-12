@@ -1,4 +1,4 @@
-#include "stdio.h"
+#include <stdio.h>
 
 
 #define USE_BITS
@@ -11,7 +11,6 @@
 #include "utils.h"
 
 
-// test
 int main(void)
 {
     unsigned int value = 0x55;
@@ -24,3 +23,10 @@ int main(void)
 
     return 0;
 }
+
+
+void cbmc(void)
+{
+    main();
+}
+

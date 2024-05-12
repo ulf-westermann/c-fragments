@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 
-// test
 int main(void)
 {
     uint8_t data[] = {0x7e, 0x42, 0x00, 0x7d, 0x7e, 0x7e, 0xff, 0x7f, 0x7f};
@@ -45,4 +44,10 @@ int main(void)
     printf("test success\n");
 
     return 0;
+}
+
+
+void cbmc(void)
+{
+    main();
 }

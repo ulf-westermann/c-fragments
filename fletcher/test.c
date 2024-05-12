@@ -7,6 +7,26 @@
 #include <stdio.h>
 
 
+static void test_fletcher16_checksum_block(void);
+static void test_fletcher16_checksum_stream(void);
+static void test_fletcher32_checksum_block(void);
+static void test_fletcher32_checksum_stream(void);
+
+
+int main(void)
+{
+    test_fletcher16_checksum_block();
+    test_fletcher16_checksum_stream();
+
+    test_fletcher32_checksum_block();
+    test_fletcher32_checksum_stream();
+
+    printf("test success\n");
+
+    return 0;
+}
+
+
 static void test_fletcher16_checksum_block(void)
 {
     uint8_t test_vector[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -71,16 +91,8 @@ static void test_fletcher32_checksum_stream(void)
 }
 
 
-// test
-int main(void)
+void cbmc(void)
 {
-    test_fletcher16_checksum_block();
-    test_fletcher16_checksum_stream();
-
-    test_fletcher32_checksum_block();
-    test_fletcher32_checksum_stream();
-
-    printf("test success\n");
-
-    return 0;
+    main();
 }
+

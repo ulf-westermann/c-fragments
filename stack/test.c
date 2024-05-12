@@ -11,7 +11,6 @@ static void test_swap(void);
 static void print_stack(stack_t* s);
 
 
-// test
 int main(void)
 {
     test_empty();
@@ -255,5 +254,11 @@ static void print_stack(stack_t* s)
     printf("*\n");
 
     printf("stack top byte index (one beyond data): %u\n", top);
+}
+
+
+void cbmc(void)
+{
+    main();
 }
 

@@ -27,7 +27,7 @@ format:
 .PHONY: check
 check:
 	cppcheck --check-config --std=c11 --enable=all --suppress=missingIncludeSystem -I. $(SRCS)
-	cbmc --function main --object-bits 16 --unwind 256 --trace --localize-faults --bounds-check --pointer-check --memory-leak-check --memory-cleanup-check --div-by-zero-check --signed-overflow-check --unsigned-overflow-check --pointer-overflow-check --conversion-check --undefined-shift-check --float-overflow-check --nan-check --enum-range-check --pointer-primitive-check $(SRCS)
+	cbmc --function cbmc --object-bits 16 --unwind 256 --trace --localize-faults --bounds-check --pointer-check --memory-leak-check --memory-cleanup-check --div-by-zero-check --signed-overflow-check --unsigned-overflow-check --pointer-overflow-check --conversion-check --undefined-shift-check --float-overflow-check --nan-check --enum-range-check --pointer-primitive-check $(SRCS)
 
 .PHONY: tags
 tags:
